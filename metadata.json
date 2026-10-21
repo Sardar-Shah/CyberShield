@@ -1,0 +1,6 @@
+{
+  "name": "CyberShield",
+  "description": "Cybersecurity Incident Management System with IT Asset Tracking and Incident Response Tasks",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "Incident": {
+      "title": "Incident",
+      "description": "A cybersecurity incident record",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Title of the incident" },
+        "incidentType": { "type": "string", "enum": ["Phishing", "Malware", "Unauthorized Access", "Suspicious Login", "Data Breach", "Other"], "description": "Category of threat" },
+        "severity": { "type": "string", "enum": ["Low", "Medium", "High", "Critical"], "description": "Severity level" },
+        "status": { "type": "string", "enum": ["Open", "Investigating", "Resolved"], "description": "Current lifecycle status" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000, "description": "Detailed incident description" },
+        "dateReported": { "type": "string", "maxLength": 30, "description": "Date reported (YYYY-MM-DD)" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["title", "incidentType", "severity", "status", "description", "dateReported"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "An IT infrastructure asset inventory record",
+      "type": "object",
+      "properties": {
+        "assetName": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Name or hostname of asset" },
+        "assetType": { "type": "string", "enum": ["Computer", "Server", "Network Device", "Other"], "description": "Type of hardware or system" },
+        "ipAddress": { "type": "string", "maxLength": 45, "description": "IPv4 or IPv6 network address" },
+        "ownerDepartment": { "type": "string", "maxLength": 100, "description": "Owner person or department" },
+        "criticality": { "type": "string", "enum": ["Low", "Medium", "High"], "description": "Business criticality" },
+        "dateRegistered": { "type": "string", "maxLength": 30, "description": "Date registered" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["assetName", "assetType", "criticality", "dateRegistered"]
+    },
+    "ResponseTask": {
+      "title": "ResponseTask",
+      "description": "An incident response remediation or investigation task",
+      "type": "object",
+      "properties": {
+        "taskTitle": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Title of the response task" },
+        "relatedIncidentId": { "type": "string", "maxLength": 100, "description": "ID of related incident" },
+        "relatedIncidentTitle": { "type": "string", "maxLength": 200, "description": "Cached title of related incident" },
+        "assignedAnalyst": { "type": "string", "maxLength": 100, "description": "Analyst assigned to task" },
+        "priority": { "type": "string", "enum": ["Low", "Medium", "High"], "description": "Task priority level" },
+        "status": { "type": "string", "enum": ["Pending", "In Progress", "Completed"], "description": "Task execution status" },
+        "dueDate": { "type": "string", "maxLength": 30, "description": "Due date" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["taskTitle", "priority", "status"]
+    }
+  },
+  "firestore": {
+    "/incidents/{incidentId}": {
+      "schema": "Incident",
+      "description": "Cybersecurity incidents logged in CyberShield"
+    },
+    "/assets/{assetId}": {
+      "schema": "Asset",
+      "description": "IT hardware, server, and network assets"
+    },
+    "/responseTasks/{taskId}": {
+      "schema": "ResponseTask",
+      "description": "Incident response mitigation and remediation tasks"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isValidIncident(data) {
+      return data.keys().hasAll(['title', 'incidentType', 'severity', 'status', 'description', 'dateReported']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.incidentType in ['Phishing', 'Malware', 'Unauthorized Access', 'Suspicious Login', 'Data Breach', 'Other'] &&
+             data.severity in ['Low', 'Medium', 'High', 'Critical'] &&
+             data.status in ['Open', 'Investigating', 'Resolved'] &&
+             data.description is string && data.description.size() > 0 && data.description.size() <= 2000 &&
+             data.dateReported is string && data.dateReported.size() <= 30;
+    }
+
+    function isValidAsset(data) {
+      return data.keys().hasAll(['assetName', 'assetType', 'criticality', 'dateRegistered']) &&
+             data.assetName is string && data.assetName.size() > 0 && data.assetName.size() <= 200 &&
+             data.assetType in ['Computer', 'Server', 'Network Device', 'Other'] &&
+             data.criticality in ['Low', 'Medium', 'High'] &&
+             data.dateRegistered is string && data.dateRegistered.size() <= 30 &&
+             (!('ipAddress' in data) || (data.ipAddress is string && data.ipAddress.size() <= 45)) &&
+             (!('ownerDepartment' in data) || (data.ownerDepartment is string && data.ownerDepartment.size() <= 100));
+    }
+
+    function isValidResponseTask(data) {
+      return data.keys().hasAll(['taskTitle', 'priority', 'status']) &&
+             data.taskTitle is string && data.taskTitle.size() > 0 && data.taskTitle.size() <= 200 &&
+             data.priority in ['Low', 'Medium', 'High'] &&
+             data.status in ['Pending', 'In Progress', 'Completed'] &&
+             (!('assignedAnalyst' in data) || (data.assignedAnalyst is string && data.assignedAnalyst.size() <= 100)) &&
+             (!('relatedIncidentId' in data) || (data.relatedIncidentId is string && data.relatedIncidentId.size() <= 100)) &&
+             (!('relatedIncidentTitle' in data) || (data.relatedIncidentTitle is string && data.relatedIncidentTitle.size() <= 200)) &&
+             (!('dueDate' in data) || (data.dueDate is string && data.dueDate.size() <= 30));
+    }
+
+    match /incidents/{incidentId} {
+      allow read: if true;
+      allow create, update: if isValidIncident(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /assets/{assetId} {
+      allow read: if true;
+      allow create, update: if isValidAsset(request.resource.data);
+      allow delete: if true;
+    }
+
+    match /responseTasks/{taskId} {
+      allow read: if true;
+      allow create, update: if isValidResponseTask(request.resource.data);
+      allow delete: if true;
+    }
+  }
+}
